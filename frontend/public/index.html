@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sentinel</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="chat-container">
+
+    <h2>Sentinel</h2>
+
+    <div id="messages"></div>
+
+    <div class="input-area">
+        <input id="input" placeholder="Ask about cybersecurity risk..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+
+</div>
+
+<script>
+function addMessage(text, type) {
+    const msg = document.createElement("div");
+    msg.classList.add("message", type);
+    msg.innerText = text;
+
+    document.getElementById("messages").appendChild(msg);
+}
+
+function sendMessage() {
+    const input = document.getElementById("input");
+    const text = input.value;
+
+    if (!text) return;
+
+    // show user message
+    addMessage(text, "user");
+
+    input.value = "";
+
+    // TEMP BOT RESPONSE (later replaced by Java backend)
+    setTimeout(() => {
+        addMessage("Processing your cybersecurity query...", "bot");
+    }, 500);
+}
+</script>
+
+</body>
+</html>

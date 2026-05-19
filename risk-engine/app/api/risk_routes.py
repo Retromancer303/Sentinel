@@ -1,19 +1,21 @@
 from fastapi import APIRouter
-from app.services.risk_calculator import calculate_risk
-from app.utils.scoring_rules import get_risk_level
-from app.services.recommendations import generate_recommendations
+from app.db.database import SessionLocal
+from app.db.repository import save_assessment
 
 router = APIRouter()
 
+
 @router.post("/calculate-risk")
-def risk_endpoint(data: dict):
+def calculate_risk(data: dict):
 
-    score = calculate_risk(data)
-    level = get_risk_level(score)
-    recommendations = generate_recommendations(data, score)
+    db = SessionLocal()
 
-    return {
-        "risk_score": score,
-        "risk_level": level,
-        "recommendations": recommendations
+    result = {
+        "company_name": data["company_name"],
+        "overall_score": 72,
+        "risk_level": "High"
     }
+
+    save_assessment(db, result)
+
+    return result

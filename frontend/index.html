@@ -1,52 +1,91 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <title>Sentinel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel — Cybersecurity Risk Intelligence</title>
     <link rel="stylesheet" href="style.css">
 </head>
 
-<body>
+<body class="landing">
 
-<div class="chat-container">
+    <!-- ========== Navigation ========== -->
+    <nav class="nav">
+        <a href="index.html" class="nav-brand">
+            <span class="nav-brand-icon">S</span>
+            Sentinel
+        </a>
+        <ul class="nav-links">
+            <li><a href="index.html" class="active">Home</a></li>
+            <li><a href="pages/chat.html">Chat</a></li>
+        </ul>
+    </nav>
 
-    <h2>Sentinel</h2>
+    <!-- ========== Hero Section ========== -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Risk Engine Online
+            </div>
 
-    <div id="messages"></div>
+            <h1 class="hero-title">
+                Cybersecurity<br>
+                <span class="hero-title-accent">Risk Intelligence</span>
+            </h1>
 
-    <div class="input-area">
-        <input id="input" placeholder="Ask about cybersecurity risk..." />
-        <button onclick="sendMessage()">Send</button>
-    </div>
+            <p class="hero-subtitle">
+                Analyze threats, assess vulnerabilities, and get actionable
+                recommendations through an intelligent conversational interface.
+            </p>
 
-</div>
+            <div class="hero-actions">
+                <a href="pages/chat.html" class="btn btn-primary">
+                    Launch Sentinel
+                    <span class="btn-arrow">&#8594;</span>
+                </a>
+                <a href="#features" class="btn btn-ghost">
+                    Learn More
+                </a>
+            </div>
+        </div>
 
-<script>
-function addMessage(text, type) {
-    const msg = document.createElement("div");
-    msg.classList.add("message", type);
-    msg.innerText = text;
+        <!-- Feature cards -->
+        <div id="features" class="features">
+            <div class="feature-card">
+                <div class="feature-icon feature-icon--blue">&#9632;</div>
+                <h3>Risk Analysis</h3>
+                <p>Quantify cybersecurity risk across your infrastructure with weighted scoring and contextual
+                    assessment.</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon feature-icon--cyan">&#9670;</div>
+                <h3>Threat Assessment</h3>
+                <p>Evaluate threat vectors and attack surfaces with structured modeling aligned to industry frameworks.
+                </p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon feature-icon--amber">&#9650;</div>
+                <h3>Recommendations</h3>
+                <p>Receive prioritized mitigation strategies tailored to your organization's risk profile and posture.
+                </p>
+            </div>
+        </div>
+    </section>
 
-    document.getElementById("messages").appendChild(msg);
-}
 
-function sendMessage() {
-    const input = document.getElementById("input");
-    const text = input.value;
-
-    if (!text) return;
-
-    // show user message
-    addMessage(text, "user");
-
-    input.value = "";
-
-    // TEMP BOT RESPONSE (later replaced by Java backend)
-    setTimeout(() => {
-        addMessage("Processing your cybersecurity query...", "bot");
-    }, 500);
-}
-</script>
+    <!-- ========== Footer ========== -->
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <span class="nav-brand-icon">S</span>
+                <span>Sentinel</span>
+            </div>
+            <p class="footer-text">Cybersecurity Risk Intelligence Platform</p>
+        </div>
+    </footer>
 
 </body>
+
 </html>

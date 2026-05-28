@@ -358,7 +358,8 @@ a:hover {
     grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
     gap: var(--spacing-md);
     max-width: 900px;
-    margin: 0 auto;
+    margin-top: var(--spacing-2xl);
+    margin-inline: auto;
     padding: 0 var(--spacing-lg) var(--spacing-2xl);
     animation: fadeInUp 0.8s ease 0.3s both;
 }

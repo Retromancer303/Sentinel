@@ -21,32 +21,7 @@
 
 </div>
 
-<script>
-function addMessage(text, type) {
-    const msg = document.createElement("div");
-    msg.classList.add("message", type);
-    msg.innerText = text;
-
-    document.getElementById("messages").appendChild(msg);
-}
-
-function sendMessage() {
-    const input = document.getElementById("input");
-    const text = input.value;
-
-    if (!text) return;
-
-    // show user message
-    addMessage(text, "user");
-
-    input.value = "";
-
-    // TEMP BOT RESPONSE (later replaced by Java backend)
-    setTimeout(() => {
-        addMessage("Processing your cybersecurity query...", "bot");
-    }, 500);
-}
-</script>
+<script src="js/chat.js"></script>
 
 </body>
 </html>

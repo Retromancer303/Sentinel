@@ -23,6 +23,8 @@ body {
     padding: 10px;
     border: 1px solid #ddd;
     border-radius: 5px;
+    display: flex;
+    flex-direction: column;
 }
 
 .message {

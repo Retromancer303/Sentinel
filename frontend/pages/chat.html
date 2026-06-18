@@ -1,5 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentinel — Chat</title>
 <head>
     <meta charset="UTF-8">
     <title>Sentinel Chat</title>
@@ -7,6 +12,63 @@
 </head>
 
 <body>
+
+    <!-- ========== Navigation ========== -->
+    <nav class="nav">
+        <a href="../index.html" class="nav-brand">
+            <span class="nav-brand-icon">S</span>
+            Sentinel
+        </a>
+        <ul class="nav-links">
+            <li><a href="../index.html">Home</a></li>
+            <li><a href="chat.html" class="active">Chat</a></li>
+        </ul>
+    </nav>
+
+    <!-- ========== Chat App Shell ========== -->
+    <!--
+        Structure matches what chat.js and style.css expect:
+        - .app fills the viewport with flex column layout
+        - .app-header sits at top with title/subtitle
+        - .chat-window is the scrollable message area
+        - #messages is the flex container for bubbles (chat.js appends here)
+        - #typing-indicator shows animated dots (chat.js toggles .hidden)
+        - .input-area has the form with #message-input and .send-button
+    -->
+    <div class="app">
+        <div class="app-header">
+            <div class="app-title">Sentinel</div>
+            <div class="app-subtitle">Cybersecurity Risk Engine</div>
+        </div>
+
+        <div class="chat-window">
+            <div id="messages" class="messages"></div>
+
+            <!-- Typing indicator — hidden by default, toggled by chat.js -->
+            <div id="typing-indicator" class="typing-indicator hidden">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+            </div>
+        </div>
+
+        <form id="chat-form" class="input-area">
+            <input
+                id="message-input"
+                class="message-input"
+                type="text"
+                placeholder="Ask about cybersecurity risk..."
+                autocomplete="off"
+            >
+            <button type="submit" class="send-button">Send</button>
+        </form>
+    </div>
+
+    <!-- JS: api.js provides sendToServer(), chat.js handles all UI logic -->
+    <script src="../js/api.js"></script>
+    <script src="../js/chat.js"></script>
+
+</body>
 
 <div class="chat-container">
 

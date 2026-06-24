@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 from app.db.database import SessionLocal
 from app.db.repository import save_assessment
+from app.services.ai_agent import get_ai_reply
 
 router = APIRouter()
 
@@ -18,16 +19,7 @@ CYBERSECURITY_TOPICS = {
 
 
 def build_chat_reply(message: str) -> str:
-    question = message.lower()
-
-    for topic, reply in CYBERSECURITY_TOPICS.items():
-        if topic in question:
-            return reply
-
-    return (
-        "I can help with cybersecurity risk questions. Ask about phishing, MFA, "
-        "passwords, backups, ransomware, firewalls, patching, or risk scoring."
-    )
+    return get_ai_reply(message)
 
 
 @router.post("/chat")

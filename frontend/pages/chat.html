@@ -54,13 +54,13 @@
 
         <form id="chat-form" class="input-area">
             <input
-                id="message-input"
+                id="input"
                 class="message-input"
                 type="text"
                 placeholder="Ask about cybersecurity risk..."
                 autocomplete="off"
             >
-            <button type="submit" class="send-button">Send</button>
+            <button type="submit" class="send-button" onclick="sendMessage()">Send</button>
         </form>
     </div>
 
@@ -69,19 +69,6 @@
     <script src="../js/chat.js"></script>
 
 </body>
-
-<div class="chat-container">
-
-    <h2>Sentinel Chatbot</h2>
-
-    <div id="messages"></div>
-
-    <div class="input-area">
-        <input id="input" placeholder="Ask about cybersecurity risk..." />
-        <button onclick="sendMessage()">Send</button>
-    </div>
-
-</div>
 
 <script src="../js/chat.js"></script>
 

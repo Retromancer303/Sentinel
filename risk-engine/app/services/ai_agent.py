@@ -18,7 +18,9 @@ def build_prompt(message: str, history: Optional[list[dict]] = None) -> str:
         context_text = "\n".join(context_parts)
         return (
             "You are a friendly cybersecurity assistant for Sentinel. "
-            "Use the previous conversation to answer naturally. "
+            "Treat the conversation history as active context. "
+            "If the user asks to expand, clarify, elaborate, or continue, answer directly using the earlier topic. "
+            "Do not ask them to repeat themselves unless the context is truly missing. "
             f"Conversation so far:\n{context_text}\n\n"
             f"Current user question: {message}"
         )
@@ -33,20 +35,18 @@ def build_prompt(message: str, history: Optional[list[dict]] = None) -> str:
 def build_fallback_reply(message: str) -> str:
     text = message.lower()
     if "phishing" in text:
-        return "Phishing risk is reduced by training staff, filtering suspicious emails, enabling MFA, and creating a clear reporting process."
+        return "Phishing is a social engineering attack that tricks people into sharing credentials or data. The main defenses are training, email filtering, MFA, and safe reporting habits."
     if "password" in text:
-        return "Password risk is reduced by using long unique passwords, a password manager, MFA, and removing shared accounts."
+        return "Passwords should be long, unique, and stored in a password manager. MFA should be enabled wherever possible."
     if "mfa" in text:
-        return "Multi-factor authentication should be enabled for email, VPN, admin panels, cloud services, and financial systems."
+        return "MFA adds a second verification step and is one of the most effective defenses against account compromise."
     if "backup" in text:
-        return "Backups should be encrypted, tested regularly, and stored separately from production systems."
+        return "Backups should be tested regularly, encrypted, and kept separate from the main production systems."
     if "ransomware" in text:
-        return "Ransomware defenses include tested backups, patching, endpoint protection, least privilege, and user awareness training."
+        return "Ransomware defense focuses on patching, endpoint protection, least privilege, and tested backups."
     if "home network" in text or "network" in text:
-        return "For a home network, secure your router, change default passwords, enable WPA3, update firmware, and keep devices patched."
-    return (
-        f"Absolutely — for a question like this, the best first step is to focus on the main weak spots: use MFA, keep software updated, back up important data, and stay alert to suspicious emails or links. If you want, I can break it down into simple steps for your situation."
-    )
+        return "A home network should use a strong Wi-Fi password, updated router firmware, WPA3 if available, and patched devices."
+    return "I’m here to help with cybersecurity questions. Please ask about a specific topic such as phishing, passwords, backups, or ransomware."
 
 
 def get_ai_reply(message: str, history: Optional[list[dict]] = None) -> str:
@@ -59,25 +59,37 @@ def get_ai_reply(message: str, history: Optional[list[dict]] = None) -> str:
         provider = "ollama"
 
     if provider == "ollama":
-        try:
-            model = os.getenv("OLLAMA_MODEL", "llama3:latest")
-            host = os.getenv("OLLAMA_HOST", "http://localhost:11434")
-            payload = {
-                "model": model,
-                "prompt": build_prompt(message, history),
-                "stream": False,
-            }
-            req = request.Request(
-                f"{host}/api/generate",
-                data=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
-            )
-            with request.urlopen(req, timeout=10) as response:
-                data = json.loads(response.read().decode("utf-8"))
-                text = data.get("response", "").strip()
-                return text or build_fallback_reply(message)
-        except (error.URLError, error.HTTPError, TimeoutError, ValueError, json.JSONDecodeError, ssl.SSLError, OSError):
-            return build_fallback_reply(message)
+        model = os.getenv("OLLAMA_MODEL", "llama3:latest")
+        hosts = []
+        configured_host = os.getenv("OLLAMA_HOST", "http://localhost:11434").strip()
+        if configured_host:
+            hosts.append(configured_host)
+        if configured_host != "http://127.0.0.1:11434":
+            hosts.append("http://127.0.0.1:11434")
+        if configured_host != "http://localhost:11434":
+            hosts.append("http://localhost:11434")
+
+        for host in hosts:
+            try:
+                payload = {
+                    "model": model,
+                    "prompt": build_prompt(message, history),
+                    "stream": False,
+                }
+                req = request.Request(
+                    f"{host}/api/generate",
+                    data=json.dumps(payload).encode("utf-8"),
+                    headers={"Content-Type": "application/json"},
+                )
+                with request.urlopen(req, timeout=10) as response:
+                    data = json.loads(response.read().decode("utf-8"))
+                    text = data.get("response", "").strip()
+                    if text:
+                        return text
+            except (error.URLError, error.HTTPError, TimeoutError, ValueError, json.JSONDecodeError, ssl.SSLError, OSError):
+                continue
+
+        return build_fallback_reply(message)
 
     if provider == "openai":
         try:

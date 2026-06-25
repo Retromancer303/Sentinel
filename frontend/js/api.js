@@ -17,23 +17,23 @@
  *
  * @param {string} message - The user's message text
  * @returns {Promise<string>} - The bot's reply text
- *
- * TODO: Replace the stub below with a real fetch() call.
- * Example:
- *   const response = await fetch('/api/chat', {
- *       method: 'POST',
- *       headers: { 'Content-Type': 'application/json' },
- *       body: JSON.stringify({ message }),
- *   });
- *   const data = await response.json();
- *   return data.reply;
  */
 async function sendToServer(message) {
-    // --- STUB: simulates a network delay + placeholder response ---
-    // Delete this block when wiring up the real backend.
-    return new Promise((resolve) => {
-        setTimeout(() => {
-            resolve(`I received your message: "${message}". Backend integration pending.`);
-        }, 1200);
+    const sessionId = sessionStorage.getItem("sentinel-session-id") || `session-${Date.now()}`;
+    sessionStorage.setItem("sentinel-session-id", sessionId);
+
+    const response = await fetch("http://localhost:8000/chat", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message, session_id: sessionId })
     });
+
+    if (!response.ok) {
+        throw new Error(`Chat request failed with status ${response.status}`);
+    }
+
+    const data = await response.json();
+    return data.reply || "";
 }

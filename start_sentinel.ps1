@@ -8,7 +8,28 @@ if (-not $env:SENTINEL_HIDDEN_LAUNCH -and $scriptPath) {
 }
 
 $scriptDirectory = Split-Path -Parent $scriptPath
-$projectRoot = if ($scriptDirectory) { $scriptDirectory } else { (Get-Location).Path }
+$possibleRoots = @()
+if ($scriptDirectory) { $possibleRoots += $scriptDirectory }
+if ($scriptDirectory) { $possibleRoots += (Join-Path $scriptDirectory "..") }
+$possibleRoots += (Get-Location).Path
+$possibleRoots += "$HOME\Sentinel"
+$possibleRoots += "$HOME\Documents\GitHub\Sentinel"
+$possibleRoots += "$PWD\Sentinel"
+
+$projectRoot = $null
+foreach ($candidate in $possibleRoots | Select-Object -Unique) {
+    $resolved = [System.IO.Path]::GetFullPath($candidate)
+    if ((Test-Path (Join-Path $resolved "risk-engine")) -and (Test-Path (Join-Path $resolved "frontend"))) {
+        $projectRoot = $resolved
+        break
+    }
+}
+
+if (-not $projectRoot) {
+    Write-Error "Could not locate the Sentinel project folder."
+    exit 1
+}
+
 $backendDir = Join-Path $projectRoot "risk-engine"
 $frontendPath = Join-Path $projectRoot "frontend\index.html"
 $venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"

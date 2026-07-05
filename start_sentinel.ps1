@@ -1,13 +1,50 @@
 $ErrorActionPreference = "Stop"
 
-$scriptPath = $MyInvocation.MyCommand.Path
+function Resolve-SentinelScriptPath {
+    $candidates = @()
+
+    if ($PSCommandPath) { $candidates += $PSCommandPath }
+    if ($MyInvocation.MyCommand.Path) { $candidates += $MyInvocation.MyCommand.Path }
+    if ($PSScriptRoot) { $candidates += $PSScriptRoot }
+    $candidates += (Get-Location).Path
+    $candidates += "$HOME\Sentinel"
+    $candidates += "$HOME\Documents\GitHub\Sentinel"
+    $candidates += "$PWD\Sentinel"
+
+    foreach ($candidate in $candidates | Select-Object -Unique) {
+        if ([string]::IsNullOrWhiteSpace($candidate)) { continue }
+
+        try {
+            if (Test-Path $candidate -PathType Leaf) {
+                return (Resolve-Path $candidate).Path
+            }
+
+            if (Test-Path $candidate -PathType Container) {
+                return (Resolve-Path $candidate).Path
+            }
+        } catch {
+            continue
+        }
+    }
+
+    return $null
+}
+
+$scriptPath = Resolve-SentinelScriptPath
 if (-not $env:SENTINEL_HIDDEN_LAUNCH -and $scriptPath) {
     $env:SENTINEL_HIDDEN_LAUNCH = "1"
     Start-Process -FilePath "powershell.exe" -ArgumentList @("-NoProfile", "-ExecutionPolicy", "Bypass", "-File", $scriptPath) -WindowStyle Hidden
     exit 0
 }
 
-$scriptDirectory = Split-Path -Parent $scriptPath
+$scriptDirectory = if ($scriptPath -and (Test-Path $scriptPath -PathType Leaf)) {
+    Split-Path -Parent $scriptPath
+} elseif ($scriptPath -and (Test-Path $scriptPath -PathType Container)) {
+    $scriptPath
+} else {
+    (Get-Location).Path
+}
+
 $possibleRoots = @()
 if ($scriptDirectory) { $possibleRoots += $scriptDirectory }
 if ($scriptDirectory) { $possibleRoots += (Join-Path $scriptDirectory "..") }

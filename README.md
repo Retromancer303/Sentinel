@@ -1,4 +1,4 @@
-# Sentinel
+# Sentinel 
 
 Sentinel is a local-first cybersecurity assistant and risk dashboard. It combines a lightweight frontend, a FastAPI backend, and a local Ollama-based chatbot so you can ask cybersecurity questions without sending data to a remote service.
 

@@ -7,7 +7,8 @@ if (-not $env:SENTINEL_HIDDEN_LAUNCH -and $scriptPath) {
     exit 0
 }
 
-$projectRoot = "C:\Users\bloxd\Documents\GitHub\Sentinel"
+$scriptDirectory = Split-Path -Parent $scriptPath
+$projectRoot = if ($scriptDirectory) { $scriptDirectory } else { (Get-Location).Path }
 $backendDir = Join-Path $projectRoot "risk-engine"
 $frontendPath = Join-Path $projectRoot "frontend\index.html"
 $venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"

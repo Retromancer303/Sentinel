@@ -70,24 +70,27 @@ def get_ai_reply(message: str, history: Optional[list[dict]] = None) -> str:
             hosts.append("http://localhost:11434")
 
         for host in hosts:
-            try:
-                payload = {
-                    "model": model,
-                    "prompt": build_prompt(message, history),
-                    "stream": False,
-                }
-                req = request.Request(
-                    f"{host}/api/generate",
-                    data=json.dumps(payload).encode("utf-8"),
-                    headers={"Content-Type": "application/json"},
-                )
-                with request.urlopen(req, timeout=10) as response:
-                    data = json.loads(response.read().decode("utf-8"))
-                    text = data.get("response", "").strip()
-                    if text:
-                        return text
-            except (error.URLError, error.HTTPError, TimeoutError, ValueError, json.JSONDecodeError, ssl.SSLError, OSError):
-                continue
+            for attempt in range(2):
+                try:
+                    payload = {
+                        "model": model,
+                        "prompt": build_prompt(message, history),
+                        "stream": False,
+                    }
+                    req = request.Request(
+                        f"{host}/api/generate",
+                        data=json.dumps(payload).encode("utf-8"),
+                        headers={"Content-Type": "application/json"},
+                    )
+                    with request.urlopen(req, timeout=60) as response:
+                        data = json.loads(response.read().decode("utf-8"))
+                        text = data.get("response", "").strip()
+                        if text:
+                            return text
+                except (error.URLError, error.HTTPError, TimeoutError, ValueError, json.JSONDecodeError, ssl.SSLError, OSError):
+                    if attempt == 0:
+                        continue
+                    break
 
         return build_fallback_reply(message)
 

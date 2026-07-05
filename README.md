@@ -2,15 +2,21 @@
 
 Sentinel is a local-first cybersecurity assistant and risk dashboard. It combines a lightweight frontend, a FastAPI backend, and a local Ollama-based chatbot so you can ask cybersecurity questions without sending data to a remote service.
 
-## What you need installed
+## Apps needed
 
 Before starting Sentinel, make sure these are available on your machine:
 
 - Python 3.10+ (the project uses a local virtual environment)
+  - https://www.python.org/downloads/
 - Ollama installed and running locally
+  - https://ollama.com/
 - A local Ollama model available, preferably:
   - llama3:latest
+  - Install it with: ollama pull llama3:latest
 - Redis (optional for chat history persistence, but the app can still run without it)
+  - https://redis.io/docs/latest/operate/oss_and_stack/install/install-redis/
+- Docker Desktop (optional, useful if you want to run Redis in a container)
+  - https://www.docker.com/products/docker-desktop/
 - A browser such as Chrome or Edge
 
 ## Install and prepare the project
@@ -19,7 +25,7 @@ Follow these steps in order on a Windows machine.
 
 ### 1. Open the project folder
 Open a terminal in the project root:
-- C:\Users\bloxd\Documents\GitHub\Sentinel
+- <your-project-folder>\Sentinel
 
 ### 2. Create a Python virtual environment
 If you do not already have one, create a local virtual environment:

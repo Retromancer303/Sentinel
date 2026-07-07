@@ -85,7 +85,8 @@ html {
     scroll-behavior: smooth;
 }
 
-html, body {
+html,
+body {
     height: 100%;
 }
 
@@ -227,7 +228,8 @@ a:hover {
     justify-content: center;
     text-align: center;
     padding: var(--spacing-2xl) var(--spacing-lg);
-    padding-top: calc(80px + var(--spacing-2xl)); /* offset for fixed nav */
+    padding-top: calc(80px + var(--spacing-2xl));
+    /* offset for fixed nav */
     min-height: 100vh;
 }
 
@@ -426,6 +428,7 @@ a:hover {
         opacity: 0;
         transform: translateY(20px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -454,7 +457,8 @@ a:hover {
    ============================================================ */
 .app-header {
     padding: var(--spacing-md) var(--spacing-lg);
-    padding-top: calc(60px + var(--spacing-md)); /* offset for fixed nav */
+    padding-top: calc(60px + var(--spacing-md));
+    /* offset for fixed nav */
     border-bottom: 1px solid var(--color-border-subtle);
     background: var(--color-bg);
     display: flex;
@@ -556,6 +560,7 @@ a:hover {
 .message-wrapper {
     display: flex;
     flex-direction: column;
+    max-width: 75%;
     gap: 4px;
     animation: messageIn 0.25s ease both;
 }
@@ -574,7 +579,6 @@ a:hover {
 .message {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
-    max-width: 75%;
     word-wrap: break-word;
     font-size: 0.93rem;
     line-height: 1.55;
@@ -584,6 +588,7 @@ a:hover {
     background: var(--color-user-bubble);
     color: var(--color-user-text);
     border-bottom-right-radius: var(--radius-sm);
+    align-self: flex-end;
 }
 
 .message-bot {
@@ -634,6 +639,7 @@ a:hover {
         opacity: 0;
         transform: translateY(8px) scale(0.98);
     }
+
     to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -675,10 +681,14 @@ a:hover {
 }
 
 @keyframes bounce {
-    0%, 60%, 100% {
+
+    0%,
+    60%,
+    100% {
         transform: translateY(0);
         opacity: 0.3;
     }
+
     30% {
         transform: translateY(-5px);
         opacity: 1;

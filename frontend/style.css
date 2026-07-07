@@ -457,6 +457,9 @@ a:hover {
     padding-top: calc(60px + var(--spacing-md)); /* offset for fixed nav */
     border-bottom: 1px solid var(--color-border-subtle);
     background: var(--color-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .app-title {
@@ -473,6 +476,24 @@ a:hover {
     margin-top: 2px;
     letter-spacing: 0.03em;
     text-transform: uppercase;
+}
+
+.clear-chat-btn {
+    background: none;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    padding: var(--spacing-sm);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    transition: color var(--transition-fast), border-color var(--transition-fast);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.clear-chat-btn:hover {
+    color: #ef4444;
+    border-color: #ef4444;
 }
 
 /* ============================================================

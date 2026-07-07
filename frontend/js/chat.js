@@ -24,6 +24,7 @@ let messagesEl;      // The container where message bubbles are appended
 let formEl;          // The <form> element
 let inputEl;         // The text input field
 let typingIndicator; // The "bot is typing" animated dots
+let clearChatBtn;    // The clear chat button
 
 /**
  * init() — runs once after DOM is ready.
@@ -34,9 +35,11 @@ function init() {
     formEl = document.getElementById("chat-form");
     inputEl = document.getElementById("message-input");
     typingIndicator = document.getElementById("typing-indicator");
+    clearChatBtn = document.getElementById("clear-chat-btn");
 
     // Listen for form submission (covers both button click and Enter key)
     formEl.addEventListener("submit", handleSubmit);
+    clearChatBtn.addEventListener("click", clearChat);
 
     // Focus the input on page load so the user can start typing immediately
     inputEl.focus();
@@ -156,6 +159,16 @@ function showTypingIndicator(show) {
     if (show) {
         scrollToBottom(); // Scroll down so the user sees the indicator
     }
+}
+
+/**
+ * clearChat — removes all messages and resets the session.
+ * The backend will get a fresh session ID on the next message.
+ */
+function clearChat() {
+    messagesEl.innerHTML = "";
+    sessionStorage.removeItem("sentinel-session-id");
+    inputEl.focus();
 }
 
 // ============================================================

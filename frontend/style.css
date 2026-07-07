@@ -582,6 +582,7 @@ a:hover {
     word-wrap: break-word;
     font-size: 0.93rem;
     line-height: 1.55;
+    max-width: 75%;
 }
 
 .message-user {

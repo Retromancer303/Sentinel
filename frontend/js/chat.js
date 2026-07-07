@@ -22,7 +22,7 @@
 
 let messagesEl;      // The container where message bubbles are appended
 let formEl;          // The <form> element
-let inputEl;         // The text input field
+let inputEl;         // The textarea input field
 let typingIndicator; // The "bot is typing" animated dots
 let clearChatBtn;    // The clear chat button
 let exportChatBtn;   // The export chat button
@@ -39,16 +39,28 @@ function init() {
     clearChatBtn = document.getElementById("clear-chat-btn");
     exportChatBtn = document.getElementById("export-chat-btn");
 
-    // Listen for form submission (covers both button click and Enter key)
+    // Listen for form submission (covers button click)
     formEl.addEventListener("submit", handleSubmit);
     clearChatBtn.addEventListener("click", clearChat);
     exportChatBtn.addEventListener("click", exportChat);
+
+    // Enter sends the message, Shift+Enter inserts a new line
+    inputEl.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault(); // Prevent newline — we want to send
+            handleSubmit(e);
+        }
+    });
+
+    // Auto-resize textarea as the user types
+    inputEl.addEventListener("input", autoResize);
 
     // Escape key: clear input if it has text, otherwise clear chat
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
             if (inputEl.value.trim()) {
                 inputEl.value = "";
+                autoResize(); // Shrink back to one line
             } else {
                 clearChat();
             }
@@ -97,6 +109,7 @@ async function sendMessage(text) {
 
     // Step 2: Clear input and lock the UI while bot "thinks"
     inputEl.value = "";
+    autoResize(); // Shrink textarea back to one line
     setInputEnabled(false);
 
     // Step 3: Show typing indicator
@@ -192,6 +205,16 @@ function scrollToBottom() {
 }
 
 /**
+ * autoResize — grows/shrinks the textarea to fit its content.
+ * Resets to one line when empty, caps at max-height (CSS handles
+ * the scroll overflow via max-height + overflow-y: auto).
+ */
+function autoResize() {
+    inputEl.style.height = "auto"; // Shrink first so we can measure
+    inputEl.style.height = inputEl.scrollHeight + "px"; // Grow to fit content
+}
+
+/**
  * setInputEnabled — toggles the input field and button on/off.
  * Disabled while waiting for the bot to respond, so the user
  * doesn't send duplicate messages.
@@ -223,6 +246,8 @@ function showTypingIndicator(show) {
 function clearChat() {
     messagesEl.innerHTML = "";
     sessionStorage.removeItem("sentinel-session-id");
+    inputEl.value = "";
+    autoResize();
     inputEl.focus();
 }
 

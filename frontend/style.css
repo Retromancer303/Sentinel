@@ -580,9 +580,10 @@ a:hover {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
     word-wrap: break-word;
+    white-space: pre-wrap;
     font-size: 0.93rem;
     line-height: 1.55;
-    max-width: 75%;
+    max-width: 100%;
 }
 
 .message-user {
@@ -718,6 +719,12 @@ a:hover {
     color: var(--color-text);
     outline: none;
     transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+    /* Textarea-specific: disable manual resize, allow internal scrolling */
+    resize: none;
+    overflow-y: auto;
+    min-height: 2.5rem;
+    max-height: 9rem;
+    line-height: 1.5;
 }
 
 .message-input::placeholder {

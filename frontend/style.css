@@ -542,6 +542,23 @@ a:hover {
 /* ============================================================
    13. Message bubbles
    ============================================================ */
+.message-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    animation: messageIn 0.25s ease both;
+}
+
+.message-wrapper-user {
+    align-self: flex-end;
+    align-items: flex-end;
+}
+
+.message-wrapper-bot {
+    align-self: flex-start;
+    align-items: flex-start;
+}
+
 .message {
     padding: var(--spacing-sm) var(--spacing-md);
     border-radius: var(--radius-md);
@@ -549,22 +566,25 @@ a:hover {
     word-wrap: break-word;
     font-size: 0.93rem;
     line-height: 1.55;
-    animation: messageIn 0.25s ease both;
 }
 
 .message-user {
-    align-self: flex-end;
     background: var(--color-user-bubble);
     color: var(--color-user-text);
     border-bottom-right-radius: var(--radius-sm);
 }
 
 .message-bot {
-    align-self: flex-start;
     background: var(--color-bot-bubble);
     color: var(--color-bot-text);
     border-bottom-left-radius: var(--radius-sm);
     border: 1px solid var(--color-border-subtle);
+}
+
+.message-timestamp {
+    font-size: 0.65rem;
+    color: var(--color-text-dim);
+    padding: 0 var(--spacing-xs);
 }
 
 @keyframes messageIn {

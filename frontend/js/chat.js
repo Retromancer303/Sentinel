@@ -113,17 +113,29 @@ async function sendMessage(text) {
 // API calls or business logic — they just update what's on screen.
 
 /**
- * addMessage — creates a message bubble and appends it to the chat.
+ * addMessage — creates a message bubble with a timestamp and appends it to the chat.
  *
  * @param {string} text - The message text
  * @param {"user"|"bot"} sender - Who sent it (determines styling)
  */
 function addMessage(text, sender) {
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("message-wrapper", `message-wrapper-${sender}`);
+
     const bubble = document.createElement("div");
     bubble.classList.add("message", `message-${sender}`);
     bubble.textContent = text; // textContent is safer than innerHTML (prevents XSS)
 
-    messagesEl.appendChild(bubble);
+    const timestamp = document.createElement("div");
+    timestamp.classList.add("message-timestamp");
+    timestamp.textContent = new Date().toLocaleTimeString([], {
+        hour: "2-digit",
+        minute: "2-digit",
+    });
+
+    wrapper.appendChild(bubble);
+    wrapper.appendChild(timestamp);
+    messagesEl.appendChild(wrapper);
     scrollToBottom();
 }
 

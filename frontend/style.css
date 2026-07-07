@@ -478,7 +478,13 @@ a:hover {
     text-transform: uppercase;
 }
 
-.clear-chat-btn {
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-xs);
+}
+
+.header-action-btn {
     background: none;
     border: 1px solid var(--color-border-subtle);
     color: var(--color-text-muted);
@@ -491,7 +497,12 @@ a:hover {
     justify-content: center;
 }
 
-.clear-chat-btn:hover {
+.header-action-btn:hover {
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.header-action-btn--danger:hover {
     color: #ef4444;
     border-color: #ef4444;
 }
@@ -555,6 +566,7 @@ a:hover {
 }
 
 .message-wrapper-bot {
+    position: relative;
     align-self: flex-start;
     align-items: flex-start;
 }
@@ -585,6 +597,36 @@ a:hover {
     font-size: 0.65rem;
     color: var(--color-text-dim);
     padding: 0 var(--spacing-xs);
+}
+
+/* ============================================================
+   14. Copy button (bot messages)
+   ============================================================ */
+.copy-button {
+    position: absolute;
+    bottom: var(--spacing-xs);
+    right: var(--spacing-xs);
+    padding: 4px;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    color: var(--color-text-dim);
+    cursor: pointer;
+    opacity: 0;
+    transition: opacity var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.message-wrapper-bot:hover .copy-button {
+    opacity: 1;
+}
+
+.copy-button:hover {
+    color: var(--color-text);
+    border-color: var(--color-border);
+}
+
+.copy-button.copied {
+    color: #22c55e;
 }
 
 @keyframes messageIn {

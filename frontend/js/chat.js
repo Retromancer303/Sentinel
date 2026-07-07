@@ -25,6 +25,7 @@ let formEl;          // The <form> element
 let inputEl;         // The text input field
 let typingIndicator; // The "bot is typing" animated dots
 let clearChatBtn;    // The clear chat button
+let exportChatBtn;   // The export chat button
 
 /**
  * init() — runs once after DOM is ready.
@@ -36,10 +37,23 @@ function init() {
     inputEl = document.getElementById("message-input");
     typingIndicator = document.getElementById("typing-indicator");
     clearChatBtn = document.getElementById("clear-chat-btn");
+    exportChatBtn = document.getElementById("export-chat-btn");
 
     // Listen for form submission (covers both button click and Enter key)
     formEl.addEventListener("submit", handleSubmit);
     clearChatBtn.addEventListener("click", clearChat);
+    exportChatBtn.addEventListener("click", exportChat);
+
+    // Escape key: clear input if it has text, otherwise clear chat
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") {
+            if (inputEl.value.trim()) {
+                inputEl.value = "";
+            } else {
+                clearChat();
+            }
+        }
+    });
 
     // Focus the input on page load so the user can start typing immediately
     inputEl.focus();
@@ -118,6 +132,10 @@ async function sendMessage(text) {
  * @param {string} text - The message text
  * @param {"user"|"bot"} sender - Who sent it (determines styling)
  */
+// SVG icons for copy button states
+const CLIPBOARD_ICON = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+const CHECK_ICON = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+
 function addMessage(text, sender) {
     const wrapper = document.createElement("div");
     wrapper.classList.add("message-wrapper", `message-wrapper-${sender}`);
@@ -135,6 +153,31 @@ function addMessage(text, sender) {
 
     wrapper.appendChild(bubble);
     wrapper.appendChild(timestamp);
+
+    // Add copy button for bot messages
+    if (sender === "bot") {
+        const copyBtn = document.createElement("button");
+        copyBtn.classList.add("copy-button");
+        copyBtn.title = "Copy message";
+        copyBtn.innerHTML = CLIPBOARD_ICON;
+
+        copyBtn.addEventListener("click", async () => {
+            try {
+                await navigator.clipboard.writeText(text);
+                copyBtn.classList.add("copied");
+                copyBtn.innerHTML = CHECK_ICON;
+                setTimeout(() => {
+                    copyBtn.classList.remove("copied");
+                    copyBtn.innerHTML = CLIPBOARD_ICON;
+                }, 1500);
+            } catch {
+                // Clipboard API may fail in non-secure contexts
+            }
+        });
+
+        wrapper.appendChild(copyBtn);
+    }
+
     messagesEl.appendChild(wrapper);
     scrollToBottom();
 }
@@ -181,6 +224,33 @@ function clearChat() {
     messagesEl.innerHTML = "";
     sessionStorage.removeItem("sentinel-session-id");
     inputEl.focus();
+}
+
+/**
+ * exportChat — downloads the conversation as a .txt file.
+ * Iterates over message wrappers, collects sender labels and text,
+ * then triggers a browser download via a temporary anchor element.
+ */
+function exportChat() {
+    const wrappers = messagesEl.querySelectorAll(".message-wrapper");
+    if (wrappers.length === 0) return;
+
+    const lines = [];
+    wrappers.forEach((wrapper) => {
+        const bubble = wrapper.querySelector(".message");
+        const timestamp = wrapper.querySelector(".message-timestamp");
+        const sender = wrapper.classList.contains("message-wrapper-user") ? "You" : "Sentinel";
+        const time = timestamp ? timestamp.textContent : "";
+        lines.push(`[${time}] ${sender}: ${bubble.textContent}`);
+    });
+
+    const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `sentinel-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
 }
 
 // ============================================================

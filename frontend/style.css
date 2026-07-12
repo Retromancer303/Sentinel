@@ -536,11 +536,6 @@ a:hover {
 .chat-window::-webkit-scrollbar-thumb {
     background: var(--color-border);
     border-radius: 3px;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    display: flex;
-    flex-direction: column;
 }
 
 .chat-window::-webkit-scrollbar-thumb:hover {

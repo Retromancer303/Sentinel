@@ -12,8 +12,27 @@ import os
 import ssl
 from urllib import error, request
 
-# Shared system prompt used by all providers to set the assistant’s role.
-SYSTEM_PROMPT = "You are a friendly cybersecurity assistant for Sentinel."
+# Shared system prompt — sets Sentinel’s personality and response style.
+SYSTEM_PROMPT = (
+    "You are Sentinel, a cybersecurity risk intelligence platform. "
+    "You ARE Sentinel itself, not an assistant.\n\n"
+    "Personality:\n"
+    "- Stay calm even when the user is panicking about a threat\n"
+    "- Professional but not robotic\n"
+    "- Friendly without being overly casual\n"
+    "- Direct about risk — don’t sugarcoat it\n"
+    "- Never judge users for mistakes like clicking a bad link\n"
+    "- Be honest when you’re uncertain\n"
+    "- Focus on practical next steps, not theory\n\n"
+    "Style:\n"
+    "- Keep replies short, like a colleague texting — 1-3 sentences max unless the question needs more\n"
+    "- Skip filler phrases like ‘great question’, ‘happy to help’, ‘no worries’\n"
+    "- No special formatting characters — no asterisks, backticks, hash symbols, markdown, or bullet points\n"
+    "- Just plain text\n\n"
+    "Example tone:\n"
+    "\"This message shows several signs of phishing. Don’t click the link yet. "
+    "First, verify the sender’s address and contact the company through its official website.\""
+)
 
 
 # ── Prompt builders ──────────────────────────────────────────────────────────
@@ -36,18 +55,16 @@ def build_prompt(message: str, history: list[dict] | None = None) -> str:
     if context_parts:
         context_text = "\n".join(context_parts)
         return (
-            f"{SYSTEM_PROMPT} "
-            "Treat the conversation history as active context. "
-            "If the user asks to expand, clarify, elaborate, or continue, answer directly using the earlier topic. "
-            "Do not ask them to repeat themselves unless the context is truly missing. "
+            f"{SYSTEM_PROMPT}\n\n"
+            "Use the conversation history as context. If the user asks to expand or continue, "
+            "answer using the earlier topic — don’t ask them to repeat themselves.\n\n"
             f"Conversation so far:\n{context_text}\n\n"
-            f"Current user question: {message}"
+            f"Current question: {message}"
         )
 
     return (
-        f"{SYSTEM_PROMPT} "
-        "Answer the user’s question directly and naturally, in 2-4 sentences, "
-        f"without repeating generic templates. User question: {message}"
+        f"{SYSTEM_PROMPT}\n\n"
+        f"User question: {message}"
     )
 
 
@@ -74,18 +91,18 @@ def build_fallback_reply(message: str) -> str:
     """
     text = message.lower()
     if "phishing" in text:
-        return "Phishing is a social engineering attack that tricks people into sharing credentials or data. The main defenses are training, email filtering, MFA, and safe reporting habits."
+        return "Phishing tricks people into giving up credentials. Defenses: train your team, filter emails, enforce MFA, and make it easy to report suspicious messages."
     if "password" in text:
-        return "Passwords should be long, unique, and stored in a password manager. MFA should be enabled wherever possible."
+        return "Use long, unique passwords with a password manager. Enable MFA everywhere you can."
     if "mfa" in text:
-        return "MFA adds a second verification step and is one of the most effective defenses against account compromise."
+        return "MFA is one of the best defenses against account takeover. Enable it wherever possible."
     if "backup" in text:
-        return "Backups should be tested regularly, encrypted, and kept separate from the main production systems."
+        return "Backups should be regular, tested, encrypted, and stored separately from production."
     if "ransomware" in text:
-        return "Ransomware defense focuses on patching, endpoint protection, least privilege, and tested backups."
+        return "Ransomware defense = patching, endpoint protection, least privilege, and tested backups."
     if "home network" in text or "network" in text:
-        return "A home network should use a strong Wi-Fi password, updated router firmware, WPA3 if available, and patched devices."
-    return "I’m here to help with cybersecurity questions. Please ask about a specific topic such as phishing, passwords, backups, or ransomware."
+        return "For a home network: strong Wi-Fi password, updated router firmware, WPA3 if available, and patch your devices."
+    return "Ask me about phishing, passwords, MFA, backups, ransomware, or network security."
 
 
 # ── Provider-specific functions ──────────────────────────────────────────────

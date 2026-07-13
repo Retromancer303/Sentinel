@@ -1,5 +1,6 @@
 fastapi
-uvicorn
+uvicorn[standard]
+sqlalchemy
 openai>=1.0.0
 anthropic>=0.25.0
 redis>=5.0.0

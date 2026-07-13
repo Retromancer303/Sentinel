@@ -69,12 +69,33 @@ if (-not $projectRoot) {
 
 $backendDir = Join-Path $projectRoot "risk-engine"
 $frontendPath = Join-Path $projectRoot "frontend\index.html"
-$venvPython = Join-Path $projectRoot ".venv\Scripts\python.exe"
+$venvDir = Join-Path $projectRoot ".venv"
+$venvPython = Join-Path $venvDir "Scripts\python.exe"
+$reqFile = Join-Path $backendDir "requirements.txt"
+$depsMarker = Join-Path $venvDir ".deps-installed"
 
 $env:AI_PROVIDER = "ollama"
 $env:OLLAMA_MODEL = "llama3:latest"
 $env:OLLAMA_HOST = "http://127.0.0.1:11434"
 $env:REDIS_URL = "redis://localhost:6379/0"
+
+# ── Create virtual environment if needed ─────────────────────────────────────
+if (-not (Test-Path $venvPython)) {
+    Write-Host "Creating virtual environment..."
+    $systemPython = (Get-Command python -ErrorAction SilentlyContinue)
+    if (-not $systemPython) {
+        Write-Error "Python not found. Install it from https://python.org"
+        exit 1
+    }
+    & python -m venv $venvDir
+}
+
+# ── Install dependencies if needed ──────────────────────────────────────────
+if (-not (Test-Path $depsMarker)) {
+    Write-Host "Installing Python dependencies..."
+    & $venvPython -m pip install -r $reqFile --quiet
+    New-Item -ItemType File -Path $depsMarker -Force | Out-Null
+}
 
 function Stop-SentinelProcesses {
     $sentinelProcesses = Get-CimInstance Win32_Process |

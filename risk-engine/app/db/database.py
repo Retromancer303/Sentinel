@@ -6,13 +6,18 @@ import os
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-# Falls back to the local PostgreSQL instance if DATABASE_URL is not set.
+# Default to SQLite for zero-setup portability. The .db file auto-creates in the project folder.
+# Override with DATABASE_URL env var for PostgreSQL (e.g. "postgresql://user:pass@host/dbname").
 DATABASE_URL = os.getenv(
     "DATABASE_URL",
-    "postgresql://postgres:password@localhost:5432/cyberrisk",
+    "sqlite:///./sentinel.db",
 )
 
-engine = create_engine(DATABASE_URL)
+# SQLite needs connect_args for thread safety; PostgreSQL ignores them.
+engine = create_engine(
+    DATABASE_URL,
+    connect_args={"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {},
+)
 
 # SessionLocal is a factory that creates new database sessions.
 # autocommit=False means changes must be explicitly committed.

@@ -55,7 +55,7 @@ def calculate_risk_endpoint(data: RiskAssessmentRequest, db: Session = Depends(g
     recommendations = generate_recommendations(data.model_dump(), score)
 
     # Step 4: Save the assessment to the database for future reference.
-    save_assessment(db, {
+    assessment = save_assessment(db, {
         "company_name": data.company_name,
         "overall_score": score,
         "risk_level": level,
@@ -66,4 +66,5 @@ def calculate_risk_endpoint(data: RiskAssessmentRequest, db: Session = Depends(g
         overall_score=score,
         risk_level=level,
         recommendations=recommendations,
+        assessment_id=assessment.id if assessment else None,
     )

@@ -2,6 +2,8 @@
 # FastAPI uses these to automatically validate incoming JSON and generate API docs.
 # If a request doesn't match the schema, FastAPI returns a 422 error with details.
 
+from typing import Literal, Optional
+
 from pydantic import BaseModel
 
 
@@ -22,12 +24,15 @@ class RiskAssessmentRequest(BaseModel):
 
     Fields represent the company's current security posture.
     Default values assume the worst case (no controls in place).
+
+    backups must be one of: never, weekly, monthly, daily.
+    password_policy must be one of: weak, moderate, strong.
     """
     company_name: str
     mfa: bool = False
-    backups: str = "never"
+    backups: Literal["never", "weekly", "monthly", "daily"] = "never"
     training: bool = False
-    password_policy: str = "weak"
+    password_policy: Literal["weak", "moderate", "strong"] = "weak"
 
 
 class RiskAssessmentResponse(BaseModel):
@@ -36,3 +41,4 @@ class RiskAssessmentResponse(BaseModel):
     overall_score: int
     risk_level: str
     recommendations: list[str]
+    assessment_id: Optional[int] = None

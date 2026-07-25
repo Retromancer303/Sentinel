@@ -14,6 +14,10 @@ sentinel.db
 .vscode/
 .idea/
 
+# Claude / OpenClaude
+.claude/
+.openclaude/
+
 # Build
 *.egg-info/
 dist/

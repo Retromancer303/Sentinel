@@ -95,6 +95,28 @@ Set these environment variables to change defaults:
 | `DATABASE_URL` | `sqlite:///./sentinel.db` | Database connection string |
 | `REDIS_URL` | `redis://localhost:6379/0` | Redis connection (optional) |
 
+## Redis setup (optional — persistent chat history)
+
+If you want chat history to survive backend restarts, run Redis locally via Docker Desktop:
+
+1. **Install Docker Desktop** from [docker.com](https://www.docker.com/products/docker-desktop/). Follow the installer — it may ask you to restart. On Windows, make sure WSL 2 is enabled (the installer guides you through this).
+
+2. **Start Redis** once Docker Desktop is running:
+
+   ```bash
+   docker run -d --name sentinel-redis -p 6379:6379 redis:7-alpine
+   ```
+
+3. The backend picks it up automatically via the default `REDIS_URL` (`redis://localhost:6379/0`). No other config needed.
+
+To stop or restart later:
+
+```bash
+docker stop sentinel-redis    # stop
+docker start sentinel-redis   # restart
+docker rm sentinel-redis      # remove (data is lost)
+```
+
 ## Troubleshooting
 
 If the chat returns generic keyword-based replies:
